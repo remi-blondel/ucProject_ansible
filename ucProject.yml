@@ -1,0 +1,22 @@
+---
+- name: Customer VM deployement
+  hosts: proxmox-ve
+
+  roles:
+    - proxmox-vm
+
+- name: Customer Services deployement
+  hosts: "ucProject"
+  become: yes
+
+  roles:
+#    - initial-settings
+#    - docker-ce
+#    - docker-py
+#    - nextcloud
+#    - collabora
+#    - mediawiki
+#    - joomla
+#    - freepbx
+#    - mailserver
+#    - mailu

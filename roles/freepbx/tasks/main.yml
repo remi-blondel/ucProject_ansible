@@ -1,0 +1,23 @@
+---
+- name: "Pull the Freepbx Image"
+  docker_image:
+    name: jmar71n/freepbx
+    source: pull
+
+- name: "Create and run the Freepbx container"
+  docker_container:
+    name: freepbx
+    image: jmar71n/freepbx
+    state: started
+    restart_policy: always
+    ports:
+      - "59898:59898"
+      - "40430:40430"
+      - "4569:4569"
+      - "5060:5060"
+      - "5061:5061"
+      - "5038:5038"
+      - "80:80"
+      - "55315:55315"
+#    network_mode: host
+    networks_cli_compatible: yes

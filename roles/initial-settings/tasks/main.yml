@@ -1,0 +1,15 @@
+---
+- name: "Load vm variables"
+  include_vars:
+    file: vm.yml
+
+- name: "Set vm hostname"
+  command: hostname "{{ name }}"
+
+- name: Install pip3
+  apt:
+    name: python3-pip
+
+- name: install dnspython
+  pip:
+    name: dnspython

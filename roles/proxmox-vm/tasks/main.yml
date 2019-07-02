@@ -1,0 +1,45 @@
+---
+#- name: Create a new proxmox-vm
+#  vars_files:
+#    - vm.yml
+#  tasks:
+
+- name: "Load new vm variables"
+  include_vars:
+    file: vm.yml
+
+- name: "Use template ucProject-templateVM on node lab"
+  proxmox_kvm:
+    api_user: "{{api_user}}"
+    api_password: "{{api_password}}"
+    api_host: "{{api_host}}"
+    clone: "{{clone}}"   # The VM source
+    name: "{{name}}"  # The target VM name
+    node: "{{node}}"
+    storage: "{{storage}}"
+    format: "{{format}}"
+    timeout: 500
+
+- name: "Start the vm"
+  proxmox_kvm:
+    api_user: "{{api_user}}"
+    api_password: "{{api_password}}"
+    api_host: "{{api_host}}"
+    name: "{{name}}"  # The target VM name
+    node: "{{node}}"
+    state: started
+
+- name: "Getting VM IP address"
+  command: "./proxmox-get-vm-ip.sh {{name}}"
+  register: ip_address
+
+#- name: "Save IP address in file"
+#  copy: content="{{ ip_address.stdout }}" dest=/root/ip_address
+
+- lineinfile:
+    path: /etc/ansible/hosts
+    regexp: '{{ ip_address.stdout }} ansible_user=administrator ansible_ssh_pass=ucProject123'
+    insertafter: '^\[ucProject\]'
+    line: "{{ ip_address.stdout }} ansible_user=administrator ansible_ssh_pass=ucProject123"
+
+- meta: refresh_inventory

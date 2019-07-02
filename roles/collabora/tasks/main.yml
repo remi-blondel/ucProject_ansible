@@ -1,0 +1,19 @@
+---
+
+- name: "Pull the collabora Image"
+  docker_image:
+    name: "collabora/code"
+    source: pull
+
+- name: "Create and run the collabora container"
+  docker_container:
+    env:
+      EXTRA_PARAMS: "--o:ssl.enable=false"
+    name: "collabora"
+    image: "collabora/code"
+    state: started
+    restart_policy: always
+    ports:
+      - "9980:9980"
+    capabilities:
+      - "MKNOD"

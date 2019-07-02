@@ -1,0 +1,14 @@
+---
+
+- name: "Pull the NextCloud Image"
+  docker_image:
+    name: nextcloud
+    source: pull
+
+- name: "Create and run the NextCloud container"
+  docker_container:
+    restart_policy: always
+    name: nextcloud
+    image: nextcloud
+    ports:
+      - "8080:80"

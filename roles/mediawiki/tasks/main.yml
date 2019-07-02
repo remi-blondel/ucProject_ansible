@@ -1,0 +1,59 @@
+---
+
+- name: "Pull the mediawiki Image"
+  docker_image:
+    name: mediawiki
+    source: pull
+
+- name: "Create and run the mediawiki container"
+  docker_container:
+    name: mediawiki
+    image: mediawiki
+    ports:
+      - "8081:80"
+    volumes:
+      - /var/tmp/mediawiki:/var/tmp
+      - /var/www/mediawiki/extensions/WikiForum:/var/www/mediawiki/html/extensions/WikiForum
+      - /var/www/mediawiki/html/extensions/MultimediaViewer/tests/browser:/var/www/html/extensions/MultimediaViewer/tests/browser
+
+- name: "Pull the MySQL Image"
+  docker_image:
+    name: mysql
+    source: pull
+
+- name: "Create the mediawiki internal network"
+  docker_network:
+    name: mediawiki_net
+
+- name: "Create and run the MySQL container"
+  docker_container:
+    env:
+      MYSQL_ROOT_PASSWORD: "ucProject123"
+    image: mysql:5.7
+    labels:
+      traefik.enable: "false"
+    name: "mysql"
+    networks_cli_compatible: yes
+    networks:
+      - name: "mediawiki_net"
+    ports:
+      - "3306:3306"
+    pull: true
+    recreate: true
+    restart_policy: always
+    state: "started"
+
+- name: "Create and run the PhpMyAdmin container"
+  docker_container:
+    env:
+#      PMA_HOST: "hostvars[ucProject]['ansible_default_ipv4']['address']"
+       PMA_HOST: "{{ lookup('dig', ansible_host) }}"
+    name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    state: started
+    ports: "8082:80"
+    networks:
+      - name: mediawiki_net
+        links:
+          - "mysql:aliasmysql"
+    networks_cli_compatible: yes

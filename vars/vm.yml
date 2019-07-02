@@ -1,0 +1,10 @@
+---
+
+api_user: root@pam
+api_password:
+api_host: lab
+clone: ucProject-templateVM
+name: customer-y
+node: lab
+storage: local-lvm
+format: qcow2
